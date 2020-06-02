@@ -32,13 +32,20 @@ class VerticalList extends StatelessWidget {
                   //return new Text(ds['product_name'].toString());
                   return Padding(
                     padding: const EdgeInsets.all(8.0),
-                    child: ListTile(
-                      leading: CircleAvatar(backgroundImage: NetworkImage(ds['image'].toString(),)),
-                      title: InkWell(
-                        onTap: () => _content(
-                            ds['product_name'].toString(), context, index),
-                        child: Text(ds['product_name'].toString()),
-                      ),
+                    child: Column(
+                      children: <Widget>[
+                        ListTile(
+                          leading: CircleAvatar(backgroundImage: NetworkImage(ds['image'].toString(),)),
+                          title: InkWell(
+                            onTap: () => _content(
+                                ds['product_name'].toString(), context, index),
+                            child: Text(ds['product_name'].toString()),
+                          ),
+                        ),
+                        Divider(
+                          thickness: 1.0,
+                        ),
+                      ],
                     ),
                   );
                 });

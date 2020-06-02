@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'Product.dart';
+import 'Search.dart';
 import 'VerticalList.dart';
 
 class Home extends StatelessWidget {
@@ -12,6 +13,14 @@ class Home extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text("Home"),
+        actions: <Widget>[
+          IconButton(
+            icon: Icon(Icons.search),
+            onPressed: () {
+              showSearch(context: context, delegate: DataSearch());
+            },
+          ),
+        ],
       ),
       body: StreamBuilder(
           stream: Firestore.instance.collection('product_type').snapshots(),

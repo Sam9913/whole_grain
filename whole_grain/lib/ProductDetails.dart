@@ -3,6 +3,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:tarc/Diet.dart';
+import 'package:tarc/DietIntake.dart';
 //import 'package:wholegrain/dietIntake.dart';
 //import 'calculate.dart';
 
@@ -16,7 +18,11 @@ class Product_Details extends StatefulWidget {
 }
 
 class _Product_DetailsState extends State<Product_Details> {
-
+  List<String> detailsName = <String>["Serving size","Total whole grain content per serving",
+    "Total whole grain content", "Calories(kcal) per serving","Total fat","Saturated fat",
+    "Monounsaturated fat","Polyunsaturated fat","Carbohydrate",
+    "Fibre","Total sugar","Protein","Sodium","Potassium","Calcium","Iron"];
+  List<DietCalculate> dietIntake = List<DietCalculate>();
   double value = 1.0;
   String dropDownValue = '1';
    double serving_size;
@@ -277,6 +283,10 @@ class _Product_DetailsState extends State<Product_Details> {
                 Product_Details.productDetails[13] += potassium_double;
                 Product_Details.productDetails[14] += calcium_double;
                 Product_Details.productDetails[15] += iron_double;
+
+                for(int i = 0 ; i < Product_Details.productDetails.length ; i++){
+                  dietIntake .add(DietCalculate(detailsName[i],Product_Details.productDetails[i]));
+                }
               },
               label: 'Add',
               labelStyle: TextStyle(
@@ -288,7 +298,7 @@ class _Product_DetailsState extends State<Product_Details> {
           SpeedDialChild(
               child: Icon(Icons.done),
               backgroundColor: Colors.greenAccent,
-              onTap: () => _calculate(context, Product_Details.productName, Product_Details.productDetails),
+              onTap: () => _calculate(context, Product_Details.productName, dietIntake),
               label: 'Done',
               labelStyle: TextStyle(
                   fontWeight: FontWeight.w500,
@@ -297,33 +307,14 @@ class _Product_DetailsState extends State<Product_Details> {
               labelBackgroundColor: Colors.greenAccent)
         ],
       ),
-      /*getFab(
-        product_name: widget.product_name,
-        serving_size: serving_size,
-        totalWG_content: totalWG_content,
-        totalWG_content_per_serving: totalWG_content_per_serving,
-        kcal_per_serving: kcal_per_serving,
-        total_fat: total_fat,
-        saturated_fat: saturated_fat,
-        monounsaturated_fat: monounsaturated_fat,
-        polyunsaturated_fat: polyunsaturated_fat,
-        carbohydrate_double: carbohydrate_double,
-        fibre_double: fibre_double,
-        total_sugar: total_sugar,
-        protein_double: protein_double,
-        sodium_double: sodium_double,
-        potassium_double: potassium_double,
-        calcium_double: calcium_double,
-        iron_double: iron_double,
-      ),*/
     );
   }
 
-  void _calculate(BuildContext context, List<String> productName, List<double> productDetails) {
-   /* Navigator.of(context).push(MaterialPageRoute(
+  void _calculate(BuildContext context, List<String> productName, List<DietCalculate> dietIntake) {
+   Navigator.of(context).push(MaterialPageRoute(
         builder: (context) => DietIntake(
           productName: productName,
-          productDetails: productDetails,
-        )));*/
+          productDetails: dietIntake,
+        )));
   }
 }
