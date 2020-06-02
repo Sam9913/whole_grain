@@ -18,6 +18,7 @@ class Product_Details extends StatefulWidget {
 }
 
 class _Product_DetailsState extends State<Product_Details> {
+  List<Color> onClick = <Color>[Colors.white, Colors.white, Colors.white];
   List<String> detailsName = <String>["Serving size","Total whole grain content per serving",
     "Total whole grain content", "Calories(kcal) per serving","Total fat","Saturated fat",
     "Monounsaturated fat","Polyunsaturated fat","Carbohydrate",
@@ -252,7 +253,182 @@ class _Product_DetailsState extends State<Product_Details> {
               child: Icon(Icons.add),
               backgroundColor: Colors.greenAccent,
               onTap: () {
-                for (int index = 0; index < Product_Details.productName.length; index++) {
+                showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      var size = MediaQuery.of(context).size;
+                      return StatefulBuilder(
+                        builder: (context, setState){
+                          return Dialog(
+                            elevation: 0,
+                            backgroundColor: Colors.transparent,
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12)),
+                            child: Container(
+                                height: 240,
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  shape: BoxShape.rectangle,
+                                  borderRadius: BorderRadius.circular(10.0),
+                                ),
+                                child: Column(
+                                  children: <Widget>[
+                                    Container(
+                                      decoration: BoxDecoration(
+                                          color: Colors.greenAccent,
+                                          shape: BoxShape.rectangle,
+                                          borderRadius: BorderRadius.only(
+                                              topLeft: Radius.circular(10),
+                                              topRight: Radius.circular(10))),
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: Row(
+                                          children: <Widget>[
+                                            Expanded(
+                                              flex: 1,
+                                              child: GestureDetector(
+                                                child: Icon(Icons.clear),
+                                                onTap: () {
+                                                  Navigator.pop(context);
+                                                },
+                                              ),
+                                            ),
+
+                                            Expanded(
+                                              flex: 9,
+                                              child: Text("Choose meal intake",
+                                                  textAlign: TextAlign.center,
+                                                  style: TextStyle(
+                                                    fontSize: 18,)),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      width: double.infinity,
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.only(top: 16.0),
+                                      child: Row(
+                                        crossAxisAlignment: CrossAxisAlignment.center,
+                                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                        children: <Widget>[
+                                          InkWell(
+                                            child: Container(
+                                                height: 120,
+                                                width: size.width / 4,
+                                                child: Card(
+                                                  color: onClick[0],
+                                                  elevation: 4.0,
+                                                  child: Column(
+                                                    children: <Widget>[
+                                                      Padding(
+                                                        padding: const EdgeInsets.only(top: 8.0),
+                                                        child: CircleAvatar(backgroundImage: AssetImage
+                                                          ("data_repo/7am.png"), backgroundColor: Colors.white, radius: 30,),
+                                                      ),
+                                                      Padding(
+                                                        padding: const EdgeInsets.only(top: 8.0),
+                                                        child: Text("Breakfast"),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                )
+                                            ),
+                                            onTap: (){
+                                              setState(() {
+                                                for(int i = 0 ; i < 3 ; i++){
+                                                  onClick[i] = Colors.white;
+                                                }
+                                                onClick[0] = Colors.lightBlueAccent;
+                                              });
+                                            },
+                                          ),
+                                          InkWell(
+                                            child: Container(
+                                                height: 120,
+                                                width: size.width / 4,
+                                                child: Card(
+                                                  color: onClick[1],
+                                                  elevation: 4.0,
+                                                  child: Column(
+                                                    children: <Widget>[
+                                                      Padding(
+                                                        padding: const EdgeInsets.only(top: 8.0),
+                                                        child: CircleAvatar(backgroundImage: AssetImage
+                                                          ("data_repo/12pm.png"), backgroundColor: Colors
+                                                            .white, radius: 30,),
+                                                      ),
+                                                      Padding(
+                                                        padding: const EdgeInsets.only(top: 8.0),
+                                                        child: Text("Lunch"),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                )
+                                            ),
+                                            onTap: (){
+                                              setState(() {
+                                                for(int i = 0 ; i < 3 ; i++){
+                                                  onClick[i] = Colors.white;
+                                                }
+                                                onClick[1] = Colors.lightBlueAccent;
+                                              });
+                                            },
+                                          ),
+                                          InkWell(
+                                            child: Container(
+                                                height: 120,
+                                                width: size.width / 4,
+                                                child: Card(
+                                                  color: onClick[2],
+                                                  elevation: 4.0,
+                                                  child: Column(
+                                                    children: <Widget>[
+                                                      Padding(
+                                                        padding: const EdgeInsets.only(top: 8.0),
+                                                        child: CircleAvatar(backgroundImage: AssetImage
+                                                          ("data_repo/6pm.png"), backgroundColor: Colors
+                                                            .white, radius: 30,),
+                                                      ),
+                                                      Padding(
+                                                        padding: const EdgeInsets.only(top: 8.0),
+                                                        child: Text("Dinner"),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                )
+                                            ),
+                                            onTap: (){
+                                              setState(() {
+                                                for(int i = 0 ; i < 3 ; i++){
+                                                  onClick[i] = Colors.white;
+                                                }
+                                                onClick[2] = Colors.lightBlueAccent;
+                                              });
+                                            },
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: Align(
+                                        alignment: Alignment.bottomRight,
+                                        child: FlatButton(
+                                          color: Colors.greenAccent,
+                                          onPressed: () {  },
+                                          child: Text("Add"),
+                                        ),
+                                      ),
+                                    )
+                                  ],
+                                )),
+                          );
+                        },
+                      );
+                    });
+
+                /*for (int index = 0; index < Product_Details.productName.length; index++) {
                   if (Product_Details.productName[index] == widget.product_name) {
                     Fluttertoast.showToast(
                       msg: "Already added in",
@@ -286,7 +462,7 @@ class _Product_DetailsState extends State<Product_Details> {
 
                 for(int i = 0 ; i < Product_Details.productDetails.length ; i++){
                   dietIntake .add(DietCalculate(detailsName[i],Product_Details.productDetails[i]));
-                }
+                }*/
               },
               label: 'Add',
               labelStyle: TextStyle(

@@ -41,6 +41,8 @@ dependencies:
   google_sign_in: ^4.4.4
   flutter_auth_buttons: ^0.8.0
   pin_code_fields: ^3.0.0
+  sqflite: ^1.3.0+2
+  path_provider: ^1.6.9
 
 dev_dependencies:
   flutter_test:
@@ -56,6 +58,11 @@ flutter:
   # included with your application, so that you can use the icons in
   # the material Icons class.
   uses-material-design: true
+  assets:
+    - data_repo/logo.png
+    - data_repo/7am.png
+    - data_repo/12pm.png
+    - data_repo/6pm.png
 
   # To add assets to your application, add an assets section, like this:
   # assets:
