@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "870830456913",
+    "firebase_url": "https://wholegrain-ecf29.firebaseio.com",
+    "project_id": "wholegrain-ecf29",
+    "storage_bucket": "wholegrain-ecf29.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:870830456913:android:9681b505a9082747c8f870",
+        "android_client_info": {
+          "package_name": "com.wholegrain.tarc"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "870830456913-1qjmotr06umr49uf713bn06a4lcvlja8.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.wholegrain.tarc",
+            "certificate_hash": "586b7ef38bdd0d74287a51753c1d2b3f8388ba8c"
+          }
+        },
+        {
+          "client_id": "870830456913-dteb3rh8ca81pmoviu04i2ibnullijuu.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDNuWthxj97HeHUpEfySc0iQ-ZWxu2Pexk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "870830456913-dteb3rh8ca81pmoviu04i2ibnullijuu.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "870830456913-343qhdq2kr5v7oi0sefk55ihlehe782u.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.wholegrain"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
