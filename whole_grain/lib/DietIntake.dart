@@ -1,5 +1,9 @@
+import 'dart:convert';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tarc/ProductDetails.dart';
 import 'Diet.dart';
 import 'package:charts_flutter/flutter.dart' as charts;
@@ -7,14 +11,6 @@ import 'package:charts_flutter/flutter.dart' as charts;
 import 'Meal.dart';
 
 class DietIntake extends StatefulWidget {
-	final List<String> productName;
-	final List<DietCalculate> productDetails;
-
-	const DietIntake({
-		this.productName,
-		this.productDetails,
-	});
-
 	@override
 	_DietIntakeState createState() => _DietIntakeState();
 }
@@ -23,18 +19,20 @@ class _DietIntakeState extends State<DietIntake> with TickerProviderStateMixin {
 	final List<Tab> myTabs = <Tab>[Tab(text: 'Day 1'), Tab(text: 'Day 2'), Tab(text: 'Day 3')];
 	TabController _tabController;
 	List<Diet> data = List<Diet>();
+	String token;
 
 	@override
 	void initState() {
 		super.initState();
-		for(int index = 0 ; index < widget.productDetails.length ; index++ ) {
+		getData();
+		/*for(int index = 0 ; index < widget.productDetails.length ; index++ ) {
 			data.add(Diet(
 				date: DateTime.now().toString().substring(0,10),
 				time: DateTime.now().toString().substring(11),
 				dietName: widget.productDetails[index].material_name,
 				dietNumber: widget.productDetails[index].material_count,
 			));
-		}
+		}*/
 		_tabController = TabController(vsync: this, length: myTabs.length);
 	}
 
@@ -46,9 +44,15 @@ class _DietIntakeState extends State<DietIntake> with TickerProviderStateMixin {
 
 	@override
 	Widget build(BuildContext context) {
+		var size = MediaQuery.of(context).size;
+
 		return Scaffold(
 			appBar: AppBar(
-				title: Text("Diet Intake"),
+				backgroundColor: Colors.greenAccent,
+				title: Text("Diet Intake", style: TextStyle(color: Colors.black),),
+				iconTheme: IconThemeData(
+					color: Colors.black,
+				),
 			),
 			body: SingleChildScrollView(
 			  child: Column(
@@ -61,7 +65,7 @@ class _DietIntakeState extends State<DietIntake> with TickerProviderStateMixin {
 			  			indicatorWeight: 5.0,
 			  		),
 			      Container(
-			  			height: 270,
+			  			height: size.height / 1.5,
 			        child: TabBarView(
 			        	controller: _tabController,
 			        	children: myTabs.map((Tab tab) {
@@ -73,27 +77,11 @@ class _DietIntakeState extends State<DietIntake> with TickerProviderStateMixin {
 			        					  child: Container(
 			        					    child: ListTile(
 			        					    	title: Text("Breakfast"),
-			        								subtitle: Row(
-			        								  children: <Widget>[
-			        										Container(
-			        											height: 5.0,
-			        											width: 5.0,
-			        											decoration: new BoxDecoration(
-			        												color: Colors.black,
-			        												shape: BoxShape.circle,
-			        											),
-			        										),
-			        								    Padding(
-			        								      padding: const EdgeInsets.only(left: 8.0),
-			        								      child: Text("Food name 1"),
-			        								    ),
-			        								  ],
-			        								),
+			        								subtitle: buildIntake("2020-06-03", "breakfast"),
 															trailing: GestureDetector(
 																child: Icon(Icons.navigate_next,),
 																onTap: () => Navigator.push(context, MaterialPageRoute(builder:
-																(context) => Meal(mealName: "Breakfast",productDetails: widget
-																		.productDetails, productName: widget.productName,))),
+																(context) => Meal(mealName: "Breakfast", date: "2020-06-03"))),
 															),
 			        					    ),
 			        							decoration: BoxDecoration(
@@ -107,27 +95,11 @@ class _DietIntakeState extends State<DietIntake> with TickerProviderStateMixin {
 			        					  child: Container(
 			        					    child: ListTile(
 			        					    	title: Text("Lunch"),
-			        								subtitle: Row(
-			        									children: <Widget>[
-			        										Container(
-			        											height: 5.0,
-			        											width: 5.0,
-			        											decoration: new BoxDecoration(
-			        												color: Colors.black,
-			        												shape: BoxShape.circle,
-			        											),
-			        										),
-			        										Padding(
-			        											padding: const EdgeInsets.only(left: 8.0),
-			        											child: Text("Food name 1"),
-			        										),
-			        									],
-			        								),
+			        								subtitle: buildIntake("2020-06-03", "lunch"),
 															trailing: GestureDetector(
 																child: Icon(Icons.navigate_next,),
 																onTap: () => Navigator.push(context, MaterialPageRoute(builder:
-																		(context) => Meal(mealName: "Lunch",productDetails: widget
-																		.productDetails, productName: widget.productName,))),
+																		(context) => Meal(mealName: "Lunch",date: "2020-06-03"))),
 															),
 			        					    ),
 			        							decoration: BoxDecoration(
@@ -141,27 +113,11 @@ class _DietIntakeState extends State<DietIntake> with TickerProviderStateMixin {
 			        					  child: Container(
 			        					    child: ListTile(
 			        					    	title: Text("Dinner"),
-			        								subtitle: Row(
-			        									children: <Widget>[
-			        										Container(
-			        											height: 5.0,
-			        											width: 5.0,
-			        											decoration: new BoxDecoration(
-			        												color: Colors.black,
-			        												shape: BoxShape.circle,
-			        											),
-			        										),
-			        										Padding(
-			        											padding: const EdgeInsets.only(left: 8.0),
-			        											child: Text("Food name 1"),
-			        										),
-			        									],
-			        								),
+			        								subtitle: buildIntake("2020-06-03", "dinner"),
 															trailing: GestureDetector(
 																child: Icon(Icons.navigate_next,),
 																onTap: () => Navigator.push(context, MaterialPageRoute(builder:
-																		(context) => Meal(mealName: "Dinner",productDetails: widget
-																		.productDetails, productName: widget.productName,))),
+																		(context) => Meal(mealName: "Dinner",date: "2020-06-03"))),
 															),
 			        					    ),
 			        							decoration: BoxDecoration(
@@ -181,27 +137,11 @@ class _DietIntakeState extends State<DietIntake> with TickerProviderStateMixin {
 			        						child: Container(
 			        							child: ListTile(
 			        								title: Text("Breakfast"),
-			        								subtitle: Row(
-			        									children: <Widget>[
-			        										Container(
-			        											height: 5.0,
-			        											width: 5.0,
-			        											decoration: new BoxDecoration(
-			        												color: Colors.black,
-			        												shape: BoxShape.circle,
-			        											),
-			        										),
-			        										Padding(
-			        											padding: const EdgeInsets.only(left: 8.0),
-			        											child: Text("Food name 1"),
-			        										),
-			        									],
-			        								),
+			        								subtitle: buildIntake("2020-06-04", "breakfast"),
 															trailing: GestureDetector(
 																child: Icon(Icons.navigate_next,),
 																onTap: () => Navigator.push(context, MaterialPageRoute(builder:
-																		(context) => Meal(mealName: "Breakfast",productDetails: widget
-																		.productDetails, productName: widget.productName,))),
+																		(context) => Meal(mealName: "Breakfast",date: "2020-06-04"))),
 															),
 			        							),
 			        							decoration: BoxDecoration(
@@ -215,27 +155,11 @@ class _DietIntakeState extends State<DietIntake> with TickerProviderStateMixin {
 			        						child: Container(
 			        							child: ListTile(
 			        								title: Text("Lunch"),
-			        								subtitle: Row(
-			        									children: <Widget>[
-			        										Container(
-			        											height: 5.0,
-			        											width: 5.0,
-			        											decoration: new BoxDecoration(
-			        												color: Colors.black,
-			        												shape: BoxShape.circle,
-			        											),
-			        										),
-			        										Padding(
-			        											padding: const EdgeInsets.only(left: 8.0),
-			        											child: Text("Food name 1"),
-			        										),
-			        									],
-			        								),
+			        								subtitle: buildIntake("2020-06-04", "lunch"),
 															trailing: GestureDetector(
 																child: Icon(Icons.navigate_next,),
 																onTap: () => Navigator.push(context, MaterialPageRoute(builder:
-																		(context) => Meal(mealName: "Lunch",productDetails: widget
-																		.productDetails, productName: widget.productName,))),
+																		(context) => Meal(mealName: "Lunch",date: "2020-06-04"))),
 															),
 			        							),
 			        							decoration: BoxDecoration(
@@ -249,27 +173,11 @@ class _DietIntakeState extends State<DietIntake> with TickerProviderStateMixin {
 			        						child: Container(
 			        							child: ListTile(
 			        								title: Text("Dinner"),
-			        								subtitle: Row(
-			        									children: <Widget>[
-			        										Container(
-			        											height: 5.0,
-			        											width: 5.0,
-			        											decoration: new BoxDecoration(
-			        												color: Colors.black,
-			        												shape: BoxShape.circle,
-			        											),
-			        										),
-			        										Padding(
-			        											padding: const EdgeInsets.only(left: 8.0),
-			        											child: Text("Food name 1"),
-			        										),
-			        									],
-			        								),
+			        								subtitle: buildIntake("2020-06-04", "dinner"),
 															trailing: GestureDetector(
 																child: Icon(Icons.navigate_next,),
 																onTap: () => Navigator.push(context, MaterialPageRoute(builder:
-																		(context) => Meal(mealName: "Dinner",productDetails: widget
-																		.productDetails, productName: widget.productName,))),
+																		(context) => Meal(mealName: "Dinner",date: "2020-06-04"))),
 															),
 			        							),
 			        							decoration: BoxDecoration(
@@ -289,27 +197,11 @@ class _DietIntakeState extends State<DietIntake> with TickerProviderStateMixin {
 			        						child: Container(
 			        							child: ListTile(
 			        								title: Text("Breakfast"),
-			        								subtitle: Row(
-			        									children: <Widget>[
-			        										Container(
-			        											height: 5.0,
-			        											width: 5.0,
-			        											decoration: new BoxDecoration(
-			        												color: Colors.black,
-			        												shape: BoxShape.circle,
-			        											),
-			        										),
-			        										Padding(
-			        											padding: const EdgeInsets.only(left: 8.0),
-			        											child: Text("Food name 1"),
-			        										),
-			        									],
-			        								),
+			        								subtitle: buildIntake("2020-06-05", "breakfast"),
 															trailing: GestureDetector(
 																child: Icon(Icons.navigate_next,),
 																onTap: () => Navigator.push(context, MaterialPageRoute(builder:
-																		(context) => Meal(mealName: "Breakfast",productDetails: widget
-																		.productDetails, productName: widget.productName,))),
+																		(context) => Meal(mealName: "Breakfast",date: "2020-06-05"))),
 															),
 			        							),
 			        							decoration: BoxDecoration(
@@ -323,27 +215,11 @@ class _DietIntakeState extends State<DietIntake> with TickerProviderStateMixin {
 			        						child: Container(
 			        							child: ListTile(
 			        								title: Text("Lunch"),
-			        								subtitle: Row(
-			        									children: <Widget>[
-			        										Container(
-			        											height: 5.0,
-			        											width: 5.0,
-			        											decoration: new BoxDecoration(
-			        												color: Colors.black,
-			        												shape: BoxShape.circle,
-			        											),
-			        										),
-			        										Padding(
-			        											padding: const EdgeInsets.only(left: 8.0),
-			        											child: Text("Food name 1"),
-			        										),
-			        									],
-			        								),
+			        								subtitle: buildIntake("2020-06-05", "lunch"),
 															trailing: GestureDetector(
 																child: Icon(Icons.navigate_next,),
 																onTap: () => Navigator.push(context, MaterialPageRoute(builder:
-																		(context) => Meal(mealName: "Lunch",productDetails: widget
-																		.productDetails, productName: widget.productName,))),
+																		(context) => Meal(mealName: "Lunch",date: "2020-06-05"))),
 															),
 			        							),
 			        							decoration: BoxDecoration(
@@ -357,27 +233,11 @@ class _DietIntakeState extends State<DietIntake> with TickerProviderStateMixin {
 			        						child: Container(
 			        							child: ListTile(
 			        								title: Text("Dinner"),
-			        								subtitle: Row(
-			        									children: <Widget>[
-			        										Container(
-			        											height: 5.0,
-			        											width: 5.0,
-			        											decoration: new BoxDecoration(
-			        												color: Colors.black,
-			        												shape: BoxShape.circle,
-			        											),
-			        										),
-			        										Padding(
-			        											padding: const EdgeInsets.only(left: 8.0),
-			        											child: Text("Food name 1"),
-			        										),
-			        									],
-			        								),
+			        								subtitle: buildIntake("2020-06-05", "dinner"),
 															trailing: GestureDetector(
 																child: Icon(Icons.navigate_next,),
 																onTap: () => Navigator.push(context, MaterialPageRoute(builder:
-																		(context) => Meal(mealName: "Dinner",productDetails: widget
-																		.productDetails, productName: widget.productName,))),
+																		(context) => Meal(mealName: "Dinner",date: "2020-06-05"))),
 															),
 			        							),
 			        							decoration: BoxDecoration(
@@ -392,14 +252,60 @@ class _DietIntakeState extends State<DietIntake> with TickerProviderStateMixin {
 			        	}).toList(),
 			        ),
 			      ),
-						buildChart(data),
+						//buildChart(data),
 			    ],
 			  ),
 			),
 		);
 	}
 
-	Widget buildChart(List<Diet> data) {
+	Widget buildIntake(String date, String title){
+		return Padding(
+		  padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
+		  child: StreamBuilder(
+		  		stream: Firestore.instance.collection(title).where
+		  			("token", isEqualTo: token).where("date", isEqualTo: date).snapshots(),
+		  		builder: (context, snapshot) {
+		  			if(snapshot.hasData){
+		  				if(snapshot.data.documents.length == 0){
+								return Text("Not yet choose");
+							}
+		  				DocumentSnapshot ds = snapshot.data.documents[0];
+							List<String> productName = List.from(ds['product']);
+
+		  							return ListView.builder(
+		  									shrinkWrap: true,
+		  									itemCount: productName.length,
+		  									itemBuilder: (context, index){
+		  										return Row(
+		  											children: <Widget>[
+		  												Container(
+		  													height: 5.0,
+		  													width: 5.0,
+		  													decoration: new BoxDecoration(
+		  														color: Colors.black,
+		  														shape: BoxShape.circle,
+		  													),
+		  												),
+
+															Flexible(
+															  child: Padding(
+															    padding: const EdgeInsets.only
+		  														(left: 8.0),
+															    child: Text(productName[index]),
+															  ),
+															),
+		  											],
+		  										);
+		  									});
+		  			}
+		  			else return Container(child: Center(child: CircularProgressIndicator()));
+		  		}
+		  ),
+		);
+	}
+
+	/*Widget buildChart(List<Diet> data) {
 		List<charts.Series<Diet, String>> series = [
 			charts.Series(
 				id: "Diet Intake",
@@ -433,6 +339,11 @@ class _DietIntakeState extends State<DietIntake> with TickerProviderStateMixin {
 				),
 			),
 		);
+	}*/
+
+	getData() async{
+		SharedPreferences prefs = await SharedPreferences.getInstance();
+		token = prefs.getString("token");
 	}
 
 }

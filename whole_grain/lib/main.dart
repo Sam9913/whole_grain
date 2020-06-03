@@ -23,7 +23,6 @@ class MyApp extends StatelessWidget {
 		return MaterialApp(
 			home: Login(),
 			theme: ThemeData(
-				// Define the default brightness and colors.
 				brightness: Brightness.light,
 				primaryColor: Colors.greenAccent,
 

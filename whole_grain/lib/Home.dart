@@ -3,6 +3,8 @@ import 'dart:ui';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:tarc/DietIntake.dart';
 import 'Product.dart';
 import 'Search.dart';
 import 'VerticalList.dart';
@@ -13,6 +15,13 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+
+  @override
+  void initState() {
+    getMeal();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -28,6 +37,12 @@ class _HomeState extends State<Home> {
         appBar: AppBar(
           title: Text("Home"),
           actions: <Widget>[
+            IconButton(
+              icon: Icon(Icons.calendar_today),
+              onPressed: () {
+                Navigator.push(context, MaterialPageRoute(builder: (context) => DietIntake()));
+              },
+            ),
             IconButton(
               icon: Icon(Icons.search),
               onPressed: () {
@@ -104,5 +119,19 @@ class _HomeState extends State<Home> {
           documentReference: documentReference,
           product_type: product_type,
         )));
+  }
+
+  getMeal() async{
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    List<String> mealName = <String>["breakfast","lunch","dinner"];
+
+    for(String meal in mealName){
+      QuerySnapshot existMeal = await Firestore.instance
+          .collection(meal)
+          .where("token", isEqualTo: prefs.getString("token"))
+          .where("date", isEqualTo: DateTime.now().toString().substring(0, 10)).getDocuments();
+
+      prefs.setStringList(meal, existMeal.documents[0]["product"]);
+    }
   }
 }
