@@ -18,6 +18,7 @@ Future main() async{
 }
 
 class MyApp extends StatelessWidget {
+
 	@override
 	Widget build(BuildContext context) {
 		return MaterialApp(
@@ -69,6 +70,7 @@ class _LoginState extends State<Login> with TickerProviderStateMixin {
 					'email': email,
 				});
 				prefs.setString('token', documentReference.documentID);
+				prefs.setStringList("date", [DateTime.now().toString().substring(0,10)]);
 				Fluttertoast.showToast(
 						msg: "Hi, welcome new user!",
 						toastLength: Toast.LENGTH_SHORT,
@@ -78,7 +80,10 @@ class _LoginState extends State<Login> with TickerProviderStateMixin {
 						textColor: Colors.white);
 			}
 			else{
-				print(existQuery.documents[0].documentID);
+				List<String> date = prefs.getStringList("date") != null ? prefs.getStringList("date") :
+				List<String>() ;
+				date.add(DateTime.now().toString().substring(0,10));
+				prefs.setStringList("date", date);
 				prefs.setString('token', existQuery.documents[0].documentID);
 				Fluttertoast.showToast(
 						msg: "Welcome back!",
@@ -89,8 +94,12 @@ class _LoginState extends State<Login> with TickerProviderStateMixin {
 						textColor: Colors.white);
 			}
 
-			Navigator.pushReplacement(
-				context, MaterialPageRoute(builder: (BuildContext context) => Home()),);
+			Navigator.of(context).pushReplacement(
+				MaterialPageRoute(
+					settings: RouteSettings(name: "/Home"),
+					builder: (context) => Home(),
+				),
+			);
 		}
 
   @override
@@ -195,8 +204,17 @@ class _LoginState extends State<Login> with TickerProviderStateMixin {
 
 															if (mailController.text == "kosupure2019@gmail.com")
 																_continue(mailController.text);
-															else
+															else if (mailController.text.isNotEmpty)
 																_login(mailController.text);
+															else
+																Fluttertoast.showToast(
+																	msg: "Incorrect email",
+																	toastLength: Toast.LENGTH_SHORT,
+																	gravity: ToastGravity.BOTTOM,
+																	timeInSecForIosWeb: 1,
+																	backgroundColor: Colors.black,
+																	textColor: Colors.white,
+																);
 														},
 														color:
 														pressLogin ? Colors.white : Colors.greenAccent,

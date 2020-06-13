@@ -1,12 +1,8 @@
-import 'dart:convert';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:tarc/ProductDetails.dart';
-import 'Diet.dart';
-import 'package:charts_flutter/flutter.dart' as charts;
+import 'package:tarc/ShowAverage.dart';
 
 import 'Meal.dart';
 
@@ -18,21 +14,32 @@ class DietIntake extends StatefulWidget {
 class _DietIntakeState extends State<DietIntake> with TickerProviderStateMixin {
 	final List<Tab> myTabs = <Tab>[Tab(text: 'Day 1'), Tab(text: 'Day 2'), Tab(text: 'Day 3')];
 	TabController _tabController;
-	List<Diet> data = List<Diet>();
+	List<String> detailsName = <String>[
+		"Serving size",
+		"Total whole grain content per serving",
+		"Total whole grain content",
+		"Calories(kcal) per serving",
+		"Total fat",
+		"Saturated fat",
+		"Monounsaturated fat",
+		"Polyunsaturated fat",
+		"Carbohydrate",
+		"Fibre",
+		"Total sugar",
+		"Protein",
+		"Sodium",
+		"Potassium",
+		"Calcium",
+		"Iron"
+	];
 	String token;
+	List<String> date = List<String>();
+	List<String> meal = ["breakfast","lunch","dinner"];
 
 	@override
 	void initState() {
 		super.initState();
 		getData();
-		/*for(int index = 0 ; index < widget.productDetails.length ; index++ ) {
-			data.add(Diet(
-				date: DateTime.now().toString().substring(0,10),
-				time: DateTime.now().toString().substring(11),
-				dietName: widget.productDetails[index].material_name,
-				dietNumber: widget.productDetails[index].material_count,
-			));
-		}*/
 		_tabController = TabController(vsync: this, length: myTabs.length);
 	}
 
@@ -70,189 +77,168 @@ class _DietIntakeState extends State<DietIntake> with TickerProviderStateMixin {
 			        	controller: _tabController,
 			        	children: myTabs.map((Tab tab) {
 			        		if (tab.text == 'Day 1') {
-			        			return Column(
-			        				children: <Widget>[
-			        					Padding(
-			        					  padding: const EdgeInsets.all(8.0),
-			        					  child: Container(
-			        					    child: ListTile(
-			        					    	title: Text("Breakfast"),
-			        								subtitle: buildIntake("2020-06-03", "breakfast"),
-															trailing: GestureDetector(
-																child: Icon(Icons.navigate_next,),
-																onTap: () => Navigator.push(context, MaterialPageRoute(builder:
-																(context) => Meal(mealName: "Breakfast", date: "2020-06-03"))),
-															),
-			        					    ),
-			        							decoration: BoxDecoration(
-			        								borderRadius: new BorderRadius.circular(10.0),
-			        								color: Colors.grey.withOpacity(0.5),
-			        							),
-			        					  ),
-			        					),
-			        					Padding(
-			        					  padding: const EdgeInsets.all(8.0),
-			        					  child: Container(
-			        					    child: ListTile(
-			        					    	title: Text("Lunch"),
-			        								subtitle: buildIntake("2020-06-03", "lunch"),
-															trailing: GestureDetector(
-																child: Icon(Icons.navigate_next,),
-																onTap: () => Navigator.push(context, MaterialPageRoute(builder:
-																		(context) => Meal(mealName: "Lunch",date: "2020-06-03"))),
-															),
-			        					    ),
-			        							decoration: BoxDecoration(
-			        								borderRadius: new BorderRadius.circular(10.0),
-			        								color: Colors.grey.withOpacity(0.5),
-			        							),
-			        					  ),
-			        					),
-			        					Padding(
-			        					  padding: const EdgeInsets.all(8.0),
-			        					  child: Container(
-			        					    child: ListTile(
-			        					    	title: Text("Dinner"),
-			        								subtitle: buildIntake("2020-06-03", "dinner"),
-															trailing: GestureDetector(
-																child: Icon(Icons.navigate_next,),
-																onTap: () => Navigator.push(context, MaterialPageRoute(builder:
-																		(context) => Meal(mealName: "Dinner",date: "2020-06-03"))),
-															),
-			        					    ),
-			        							decoration: BoxDecoration(
-			        								borderRadius: new BorderRadius.circular(10.0),
-			        								color: Colors.grey.withOpacity(0.5),
-			        							),
-			        					  ),
-			        					),
-			        				],
-			        			);
+			        			return ListView.builder(
+											shrinkWrap: true,
+												itemCount: meal.length,
+												itemBuilder: (context, index){
+												if(date.isEmpty){
+													return Padding(
+													  padding: const EdgeInsets.all(8.0),
+													  child: Container(
+													  	decoration: BoxDecoration(
+													  		borderRadius: new BorderRadius.circular(10.0),
+													  		color: Colors.grey.withOpacity(0.5),
+													  	),
+													    child: ListTile(
+													    	title: Text(meal[index].substring(0,1).toUpperCase() + meal[index].substring(1)),
+													    	subtitle: Text("Not yet choose"),
+																trailing: GestureDetector(
+																	child: Icon(Icons.navigate_next,),
+																	onTap: () => Navigator.push(context, MaterialPageRoute(builder:
+																			(context) => Meal(mealName: meal[index].substring(0,1)
+																			.toUpperCase() + meal[index].substring(1), date:
+																	date[0]))),
+																),
+													    ),
+													  ),
+													);
+												}
+												return Padding(
+												  padding: const EdgeInsets.all(8.0),
+												  child: Container(
+												  	decoration: BoxDecoration(
+												  		borderRadius: new BorderRadius.circular(10.0),
+												  		color: Colors.grey.withOpacity(0.5),
+												  	),
+												    child: ListTile(
+												    	title: Text(meal[index].substring(0,1).toUpperCase() + meal[index].substring(1)),
+												    	subtitle: buildIntake(date[0], meal[index]),
+												    	trailing: GestureDetector(
+												    		child: Icon(Icons.navigate_next,),
+												    		onTap: () => Navigator.push(context, MaterialPageRoute(builder:
+												    				(context) => Meal(mealName: meal[index].substring(0,1)
+																				.toUpperCase() + meal[index].substring(1), date: date[0]))),
+												    	),
+												    ),
+												  ),
+												);
+												});
 			        		}
 			        		else if (tab.text == 'Day 2'){
-			        			return Column(
-			        				children: <Widget>[
-			        					Padding(
-			        						padding: const EdgeInsets.all(8.0),
-			        						child: Container(
-			        							child: ListTile(
-			        								title: Text("Breakfast"),
-			        								subtitle: buildIntake("2020-06-04", "breakfast"),
-															trailing: GestureDetector(
-																child: Icon(Icons.navigate_next,),
-																onTap: () => Navigator.push(context, MaterialPageRoute(builder:
-																		(context) => Meal(mealName: "Breakfast",date: "2020-06-04"))),
-															),
-			        							),
-			        							decoration: BoxDecoration(
-			        								borderRadius: new BorderRadius.circular(10.0),
-			        								color: Colors.grey.withOpacity(0.5),
-			        							),
-			        						),
-			        					),
-			        					Padding(
-			        						padding: const EdgeInsets.all(8.0),
-			        						child: Container(
-			        							child: ListTile(
-			        								title: Text("Lunch"),
-			        								subtitle: buildIntake("2020-06-04", "lunch"),
-															trailing: GestureDetector(
-																child: Icon(Icons.navigate_next,),
-																onTap: () => Navigator.push(context, MaterialPageRoute(builder:
-																		(context) => Meal(mealName: "Lunch",date: "2020-06-04"))),
-															),
-			        							),
-			        							decoration: BoxDecoration(
-			        								borderRadius: new BorderRadius.circular(10.0),
-			        								color: Colors.grey.withOpacity(0.5),
-			        							),
-			        						),
-			        					),
-			        					Padding(
-			        						padding: const EdgeInsets.all(8.0),
-			        						child: Container(
-			        							child: ListTile(
-			        								title: Text("Dinner"),
-			        								subtitle: buildIntake("2020-06-04", "dinner"),
-															trailing: GestureDetector(
-																child: Icon(Icons.navigate_next,),
-																onTap: () => Navigator.push(context, MaterialPageRoute(builder:
-																		(context) => Meal(mealName: "Dinner",date: "2020-06-04"))),
-															),
-			        							),
-			        							decoration: BoxDecoration(
-			        								borderRadius: new BorderRadius.circular(10.0),
-			        								color: Colors.grey.withOpacity(0.5),
-			        							),
-			        						),
-			        					),
-			        				],
-			        			);
+										return ListView.builder(
+												shrinkWrap: true,
+												itemCount: meal.length,
+												itemBuilder: (context, index){
+													if(date.length < 2){
+														return Padding(
+														  padding: const EdgeInsets.all(8.0),
+														  child: Container(
+														  	decoration: BoxDecoration(
+														  		borderRadius: new BorderRadius.circular(10.0),
+														  		color: Colors.grey.withOpacity(0.5),
+														  	),
+														    child: ListTile(
+														    	title: Text(meal[index].substring(0,1).toUpperCase() + meal[index].substring(1)),
+														    	subtitle: Text("Not yet choose"),
+																	trailing: GestureDetector(
+																		child: Icon(Icons.navigate_next,),
+																		onTap: () => Navigator.push(context, MaterialPageRoute(builder:
+																				(context) => Meal(mealName: meal[index].substring(0,1)
+																				.toUpperCase() + meal[index].substring(1), date:
+																		date[1]))),
+																	),
+														    ),
+														  ),
+														);
+													}
+													return Padding(
+													  padding: const EdgeInsets.all(8.0),
+													  child: Container(
+													  	decoration: BoxDecoration(
+													  		borderRadius: new BorderRadius.circular(10.0),
+													  		color: Colors.grey.withOpacity(0.5),
+													  	),
+													    child: ListTile(
+													    	title: Text(meal[index].substring(0,1).toUpperCase() + meal[index].substring(1)),
+													    	subtitle: buildIntake(date[1], meal[index]),
+													    	trailing: GestureDetector(
+													    		child: Icon(Icons.navigate_next,),
+													    		onTap: () => Navigator.push(context, MaterialPageRoute(builder:
+													    				(context) => Meal(mealName: meal[index].substring(0,1)
+																					.toUpperCase() + meal[index].substring(1), date:
+																			date[1]))),
+													    	),
+													    ),
+													  ),
+													);
+												});
 			        		}
 			        		else{
-			        			return Column(
-			        				children: <Widget>[
-			        					Padding(
-			        						padding: const EdgeInsets.all(8.0),
-			        						child: Container(
-			        							child: ListTile(
-			        								title: Text("Breakfast"),
-			        								subtitle: buildIntake("2020-06-05", "breakfast"),
-															trailing: GestureDetector(
-																child: Icon(Icons.navigate_next,),
-																onTap: () => Navigator.push(context, MaterialPageRoute(builder:
-																		(context) => Meal(mealName: "Breakfast",date: "2020-06-05"))),
-															),
-			        							),
-			        							decoration: BoxDecoration(
-			        								borderRadius: new BorderRadius.circular(10.0),
-			        								color: Colors.grey.withOpacity(0.5),
-			        							),
-			        						),
-			        					),
-			        					Padding(
-			        						padding: const EdgeInsets.all(8.0),
-			        						child: Container(
-			        							child: ListTile(
-			        								title: Text("Lunch"),
-			        								subtitle: buildIntake("2020-06-05", "lunch"),
-															trailing: GestureDetector(
-																child: Icon(Icons.navigate_next,),
-																onTap: () => Navigator.push(context, MaterialPageRoute(builder:
-																		(context) => Meal(mealName: "Lunch",date: "2020-06-05"))),
-															),
-			        							),
-			        							decoration: BoxDecoration(
-			        								borderRadius: new BorderRadius.circular(10.0),
-			        								color: Colors.grey.withOpacity(0.5),
-			        							),
-			        						),
-			        					),
-			        					Padding(
-			        						padding: const EdgeInsets.all(8.0),
-			        						child: Container(
-			        							child: ListTile(
-			        								title: Text("Dinner"),
-			        								subtitle: buildIntake("2020-06-05", "dinner"),
-															trailing: GestureDetector(
-																child: Icon(Icons.navigate_next,),
-																onTap: () => Navigator.push(context, MaterialPageRoute(builder:
-																		(context) => Meal(mealName: "Dinner",date: "2020-06-05"))),
-															),
-			        							),
-			        							decoration: BoxDecoration(
-			        								borderRadius: new BorderRadius.circular(10.0),
-			        								color: Colors.grey.withOpacity(0.5),
-			        							),
-			        						),
-			        					),
-			        				],
-			        			);
+										return ListView.builder(
+												shrinkWrap: true,
+												itemCount: meal.length,
+												itemBuilder: (context, index){
+													if(date.length < 3){
+														return Padding(
+														  padding: const EdgeInsets.all(8.0),
+														  child: Container(
+														  	decoration: BoxDecoration(
+														  		borderRadius: new BorderRadius.circular(10.0),
+														  		color: Colors.grey.withOpacity(0.5),
+														  	),
+														    child: ListTile(
+														    	title: Text(meal[index].substring(0,1).toUpperCase() + meal[index].substring(1)),
+														    	subtitle: Text("Not yet choose"),
+																	trailing: GestureDetector(
+																		child: Icon(Icons.navigate_next,),
+																		onTap: () => Navigator.push(context, MaterialPageRoute(builder:
+																				(context) => Meal(mealName: meal[index].substring(0,1)
+																				.toUpperCase() + meal[index].substring(1), date:
+																		date[2]))),
+																	),
+														    ),
+														  ),
+														);
+													}
+													return Padding(
+													  padding: const EdgeInsets.all(8.0),
+													  child: Container(
+													  	decoration: BoxDecoration(
+													  		borderRadius: new BorderRadius.circular(10.0),
+													  		color: Colors.grey.withOpacity(0.5),
+													  	),
+													    child: ListTile(
+													    	title: Text(meal[index].substring(0,1).toUpperCase() + meal[index].substring(1)),
+													    	subtitle: buildIntake(date[2], meal[index]),
+													    	trailing: GestureDetector(
+													    		child: Icon(Icons.navigate_next,),
+													    		onTap: () => Navigator.push(context, MaterialPageRoute(builder:
+													    				(context) => Meal(mealName: meal[index].substring(0,1)
+																					.toUpperCase() + meal[index].substring(1), date:
+																			date[2]))),
+													    	),
+													    ),
+													  ),
+													);
+												});
 			        		}
 			        	}).toList(),
 			        ),
 			      ),
-						//buildChart(data),
+
+						Container(
+							decoration: BoxDecoration(
+								borderRadius: BorderRadius.circular(10.0),
+								color: Colors.greenAccent,
+							),
+						  child: FlatButton(
+						  		onPressed: (){
+						  			Navigator.of(context).push(MaterialPageRoute(builder: (context) =>
+												ShowAverage()));
+						  		},
+						  		child: Text("Average")),
+						),
+
 			    ],
 			  ),
 			),
@@ -305,45 +291,10 @@ class _DietIntakeState extends State<DietIntake> with TickerProviderStateMixin {
 		);
 	}
 
-	/*Widget buildChart(List<Diet> data) {
-		List<charts.Series<Diet, String>> series = [
-			charts.Series(
-				id: "Diet Intake",
-				data: data,
-				seriesCategory: data[0].dietName,
-				domainFn: (Diet series, _) => series.date,
-				measureFn: (Diet series, _) => series.dietNumber,
-			)
-		];
-
-		return Container(
-			height: 400,
-			padding: EdgeInsets.all(20),
-			child: Card(
-				child: Padding(
-					padding: const EdgeInsets.all(8.0),
-					child: Column(
-						children: <Widget>[
-							Text(
-								"Diet Intake",
-								style: Theme.of(context).textTheme.bodyText1,
-							),
-							Expanded(
-									child: charts.BarChart(
-										series,
-										animate: true,
-										barGroupingType: charts.BarGroupingType.groupedStacked,
-									))
-						],
-					),
-				),
-			),
-		);
-	}*/
-
 	getData() async{
 		SharedPreferences prefs = await SharedPreferences.getInstance();
 		token = prefs.getString("token");
+		date = prefs.getStringList("date") != null ? prefs.getStringList("date"): List<String>();
 	}
 
 }

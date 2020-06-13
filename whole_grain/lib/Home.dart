@@ -17,12 +17,6 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
 
   @override
-  void initState() {
-    getMeal();
-    super.initState();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return MaterialApp(
       theme: ThemeData(
@@ -55,7 +49,7 @@ class _HomeState extends State<Home> {
             stream: Firestore.instance.collection('product_type').snapshots(),
             builder: (context, snapshot) {
               if (!snapshot.hasData) return Text("Loading...");
-              return new ListView.builder(
+              return ListView.builder(
                   shrinkWrap: true,
                   itemCount: snapshot.data.documents.length,
                   itemBuilder: (context, index) {
@@ -71,8 +65,9 @@ class _HomeState extends State<Home> {
                             children: <Widget>[
                               new Text(ds_type['Name'].toString()),
                               new InkWell(
-                                onTap: () => _showAll(
-                                    dr, ds_type['Name'].toString(), context),
+                                onTap: () =>
+                                    _showAll(
+                                        dr, ds_type['Name'].toString(), context),
                                 child: new Text(
                                   "Show All",
                                   textAlign: TextAlign.right,
@@ -115,23 +110,11 @@ class _HomeState extends State<Home> {
 
   void _showAll(DocumentReference documentReference, String product_type, BuildContext context) {
     Navigator.of(context).push(MaterialPageRoute(
-        builder: (context) => VerticalList(
-          documentReference: documentReference,
-          product_type: product_type,
-        )));
+        builder: (context) =>
+            VerticalList(
+              documentReference: documentReference,
+              product_type: product_type,
+            )));
   }
 
-  getMeal() async{
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    List<String> mealName = <String>["breakfast","lunch","dinner"];
-
-    for(String meal in mealName){
-      QuerySnapshot existMeal = await Firestore.instance
-          .collection(meal)
-          .where("token", isEqualTo: prefs.getString("token"))
-          .where("date", isEqualTo: DateTime.now().toString().substring(0, 10)).getDocuments();
-
-      prefs.setStringList(meal, existMeal.documents[0]["product"]);
-    }
-  }
 }

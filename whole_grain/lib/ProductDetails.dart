@@ -4,14 +4,28 @@ import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:tarc/Diet.dart';
 import 'package:tarc/DietIntake.dart';
-
-//import 'package:wholegrain/dietIntake.dart';
-//import 'calculate.dart';
 
 class Product_Details extends StatefulWidget {
   Product_Details({Key key, this.product_name}) : super(key: key);
+  static List<double> average= [
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0
+  ];
   final String product_name;
   static List<String> productName = [];
   static List<double> productDetails = [
@@ -32,7 +46,6 @@ class Product_Details extends StatefulWidget {
     0.0,
     0.0
   ];
-  static List<DietCalculate> dietIntake = [];
 
   @override
   _Product_DetailsState createState() => _Product_DetailsState();
@@ -41,24 +54,6 @@ class Product_Details extends StatefulWidget {
 class _Product_DetailsState extends State<Product_Details> {
   List<Color> onClick = <Color>[Colors.white, Colors.white, Colors.white];
   String onClickTitle;
-  List<String> detailsName = <String>[
-    "Serving size",
-    "Total whole grain content per serving",
-    "Total whole grain content",
-    "Calories(kcal) per serving",
-    "Total fat",
-    "Saturated fat",
-    "Monounsaturated fat",
-    "Polyunsaturated fat",
-    "Carbohydrate",
-    "Fibre",
-    "Total sugar",
-    "Protein",
-    "Sodium",
-    "Potassium",
-    "Calcium",
-    "Iron"
-  ];
   double value = 1.0;
   String dropDownValue = '1';
   double serving_size;
@@ -552,16 +547,18 @@ class _Product_DetailsState extends State<Product_Details> {
                                             SharedPreferences prefs =
                                                 await SharedPreferences.getInstance();
 
-                                            if(prefs.getStringList(onClickTitle) != null)
-                                              Product_Details.productName = prefs.getStringList(onClickTitle);
-                                            else
-                                              Product_Details.productName = List<String>();
+                                            List<String> date = prefs.getStringList("date");
 
                                                 QuerySnapshot existMeal = await Firestore.instance
                                                 .collection(onClickTitle)
                                                 .where("token", isEqualTo: prefs.getString("token"))
                                                 .where("date", isEqualTo:
                                                         DateTime.now().toString().substring(0, 10)).getDocuments();
+
+                                                if(existMeal.documents.isEmpty)
+                                            Product_Details.productName =  List<String>();
+                                                else
+                                                  Product_Details.productName = existMeal.documents[0]["product"];
 
                                             Product_Details.productDetails[0] += serving_size;
                                             Product_Details.productDetails[1] +=
@@ -586,7 +583,8 @@ class _Product_DetailsState extends State<Product_Details> {
 
                                             if (!Product_Details.productName.contains(widget.product_name)) {
                                               Product_Details.productName.add(widget.product_name);
-                                              prefs.setStringList(onClickTitle, Product_Details
+                                              prefs.setStringList(onClickTitle + DateTime.now()
+                                                  .toString().substring(0, 10), Product_Details
                                                   .productName);
 
                                               if (existMeal.documents.isEmpty) {
@@ -599,7 +597,6 @@ class _Product_DetailsState extends State<Product_Details> {
                                                       Product_Details.productDetails.toList(),
                                                 });
 
-                                                Navigator.pop(context);
                                               } else {
                                                 Firestore.instance
                                                     .collection(onClickTitle)
@@ -610,16 +607,37 @@ class _Product_DetailsState extends State<Product_Details> {
                                                       Product_Details.productDetails.toList(),
                                                 });
 
+                                              }
+
+                                              for(int i=0; i < Product_Details.average.length; i++){
+                                                Product_Details.average[i] += Product_Details
+                                                    .productDetails[i] / date.length;
+                                              }
+
+                                              QuerySnapshot existAverage = await Firestore.instance
+                                                  .collection("average")
+                                                  .where("token", isEqualTo: prefs.getString("token"))
+                                                  .where("date", isEqualTo:
+                                              DateTime.now().toString().substring(0, 10)).getDocuments();
+
+                                              if(existAverage.documents.isEmpty){
+                                                Firestore.instance.collection("average").add({
+                                                  "token": prefs.getString("token"),
+                                                  "date": DateTime.now().toString().substring(0, 10),
+                                                  "average": Product_Details.average.toList(),
+                                                });
+
+                                                Navigator.pop(context);
+                                              }else{
+                                                Firestore.instance.collection("average")
+                                                    .document(existAverage.documents[0].documentID)
+                                                    .updateData({
+                                                  "average": Product_Details.average.toList(),
+                                                });
+
                                                 Navigator.pop(context);
                                               }
 
-                                              /*for (int i = 0;
-                                                  i < Product_Details.productDetails.length;
-                                                  i++) {
-                                                Product_Details.dietIntake.add(DietCalculate(
-                                                    detailsName[i],
-                                                    Product_Details.productDetails[i]));
-                                              }*/
                                             } else {
                                               Fluttertoast.showToast(
                                                 msg: "Already added in",
