@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:tarc/Admin.dart';
 import 'package:tarc/Home.dart';
 
 class PinEnter extends StatefulWidget {
@@ -29,18 +30,18 @@ class _PinEnterState extends State<PinEnter> {
 
 	@override
 	void initState() {
-		// TODO: implement initState
 		errorController = StreamController<ErrorAnimationType>.broadcast();
 		super.initState();
 	}
 
 	@override
 	Widget build(BuildContext context) {
+		var size = MediaQuery.of(context).size;
 		return Scaffold(
 			body: Container(
 				color: Colors.greenAccent,
-				height: 592,
-				width: 400,
+				height: size.height,
+				width: size.width,
 				child: Column(
 					mainAxisAlignment: MainAxisAlignment.center,
 					crossAxisAlignment: CrossAxisAlignment.center,
@@ -129,34 +130,8 @@ class _PinEnterState extends State<PinEnter> {
 		);
 	}
 
-	void getData() {
-		databaseReference
-				.collection("user")
-				.getDocuments()
-				.then((QuerySnapshot snapshot) {
-			snapshot.documents.forEach((f) => id = int.parse(f.documentID) + 1 );
-		});
-	}
-
 	void _login() async {
-		SharedPreferences prefs = await SharedPreferences.getInstance();
-		String email = prefs.getString('email');
-
-		if(id == 0 ){
-			getData();
-		}
-		print(id.toString());
-
-		/*await databaseReference.collection("user").document(id.toString()).setData({
-      'email': email,
-    });
-    DocumentReference ref = await databaseReference.collection("user").add({
-      'title': 'Flutter in Action',
-      'description': 'Complete Programming Guide to learn Flutter'
-    });
-    print(ref.documentID);*/
-
 		Navigator.of(context).pushReplacement(
-				MaterialPageRoute(builder: (BuildContext context) => Home()));
+				MaterialPageRoute(builder: (BuildContext context) => AdminAction()));
 	}
 }
