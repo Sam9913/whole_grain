@@ -1,9 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:tarc/AddFood.dart';
 import 'package:tarc/AdminAll.dart';
 import 'package:tarc/EditFood.dart';
 import 'package:tarc/ProductDetails.dart';
+import 'package:tarc/main.dart';
 
 class AdminAction extends StatefulWidget {
   @override
@@ -22,6 +24,17 @@ class _AdminActionState extends State<AdminAction> {
         iconTheme: IconThemeData(
           color: Colors.black,
         ),
+        actions: <Widget>[
+          Padding(
+            padding: const EdgeInsets.only(right: 8.0),
+            child: GestureDetector(
+              child: Icon(Icons.power_settings_new),
+              onTap: (){
+                Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => Login()));
+              },
+            ),
+          ),
+        ],
       ),
       body: StreamBuilder(
           stream: Firestore.instance.collection('product_type').snapshots(),
@@ -95,7 +108,9 @@ class _AdminActionState extends State<AdminAction> {
                                         child: Center(
                                           child: Container(
                                             child: FlatButton(onPressed: () {
-                                              Navigator.of(context).push(MaterialPageRoute(builder: (context) => ShowAll()));
+                                              Navigator.of(context).push(MaterialPageRoute
+                                                (builder: (context) => ShowAll(productType: dr,
+                                                  title: ds_type["Name"],)));
                                             },
                                               child: Text("Show All"),),
                                           ),
@@ -119,6 +134,9 @@ class _AdminActionState extends State<AdminAction> {
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.add, color: Colors.white,),
         backgroundColor: Colors.greenAccent,
+        onPressed: (){
+          Navigator.of(context).push(MaterialPageRoute(builder: (context) => AddFood()));
+        },
       ),
     );
   }

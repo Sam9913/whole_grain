@@ -56,7 +56,8 @@ class _LoginState extends State<Login> with TickerProviderStateMixin {
 			prefs.setString('email', email);
 
 			Navigator.pushReplacement(
-				context, MaterialPageRoute(builder: (BuildContext context) => PinEnter()),);
+				context, MaterialPageRoute(
+					builder: (BuildContext context) => PinEnter()),);
 		}
 
 		void _login(String email) async {
@@ -95,10 +96,7 @@ class _LoginState extends State<Login> with TickerProviderStateMixin {
 			}
 
 			Navigator.of(context).pushReplacement(
-				MaterialPageRoute(
-					settings: RouteSettings(name: "/Home"),
-					builder: (context) => Home(),
-				),
+				MaterialPageRoute(builder: (context) => Home(),),
 			);
 		}
 

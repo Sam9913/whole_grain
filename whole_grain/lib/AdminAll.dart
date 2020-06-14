@@ -5,8 +5,9 @@ import 'EditFood.dart';
 
 class ShowAll extends StatefulWidget {
 	final DocumentReference productType;
+	final String title;
 
-  const ShowAll({Key key, this.productType}) : super(key: key);
+  const ShowAll({Key key, this.productType, this.title}) : super(key: key);
 
   @override
   _ShowAllState createState() => _ShowAllState();
@@ -18,7 +19,7 @@ class _ShowAllState extends State<ShowAll> {
     return Scaffold(
 			appBar: AppBar(
 				backgroundColor: Colors.greenAccent,
-				title: Text(widget.productType.toString(), style: TextStyle(color: Colors.black)),
+				title: Text(widget.title, style: TextStyle(color: Colors.black)),
 				iconTheme: IconThemeData(
 					color: Colors.black,
 				),

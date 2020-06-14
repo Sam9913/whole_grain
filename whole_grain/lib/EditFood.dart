@@ -87,7 +87,7 @@ class _EditFoodState extends State<EditFood> {
 			  			  		  	child: GestureDetector(
 			  			  		  		child: Align(
 													alignment: Alignment.bottomRight,
-													child: Icon(Icons.photo_camera)),
+													child: Icon(Icons.photo_camera, color: Colors.black,)),
 			  			  		  		onTap: (){
 			  			  		  			getImage();
 			  			  		  		},
