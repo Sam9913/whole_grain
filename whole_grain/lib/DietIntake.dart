@@ -293,8 +293,10 @@ class _DietIntakeState extends State<DietIntake> with TickerProviderStateMixin {
 
 	getData() async{
 		SharedPreferences prefs = await SharedPreferences.getInstance();
-		token = prefs.getString("token");
-		date = prefs.getStringList("date") != null ? prefs.getStringList("date"): List<String>();
+		setState(() {
+			token = prefs.getString("token");
+			date = prefs.getStringList("date");
+		});
 	}
 
 }

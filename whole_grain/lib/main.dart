@@ -13,6 +13,43 @@ Future main() async{
 
 	SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
 	var checkLogin = sharedPreferences.getString("token");
+	if(checkLogin.isNotEmpty) {
+		QuerySnapshot existQuery = await Firestore.instance.collection("user").getDocuments();
+
+		for(int i = 0 ; i < existQuery.documents.length ; i ++){
+			if(existQuery.documents[i].documentID == checkLogin){
+				List<String> date = List<String>();
+				var first = existQuery.documents[0]["firstDay"].toString();
+				var second = existQuery.documents[0]["secondDay"].toString();
+				var third = existQuery.documents[0]["thirdDay"].toString();
+				if(existQuery.documents[0]["thirdDay"] != null  && existQuery.documents[0]["thirdDay"].toString() != DateTime.now().toString().substring(0, 10)){
+					first = DateTime.now().toString().substring(0, 10);
+					Firestore.instance.collection("user").document(existQuery.documents[0].documentID).updateData({
+						"firstDay" : first.toString(),
+					});
+				}
+				else if(existQuery.documents[0]["firstDay"] != DateTime.now().toString().substring(0, 10) &&
+						existQuery.documents[0]["thirdDay"].toString() != DateTime.now().toString().substring(0, 10)){
+					second = DateTime.now().toString().substring(0,10);
+					Firestore.instance.collection("user").document(existQuery.documents[0].documentID).updateData({
+						"secondDay" : second.toString(),
+					});
+				}
+				else if(existQuery.documents[0]["firstDay"] != DateTime.now().toString().substring(0, 10) &&
+						existQuery.documents[0]["secondDay"].toString() != DateTime.now().toString().substring(0, 10)){
+					third = DateTime.now().toString().substring(0,10);
+					Firestore.instance.collection("user").document(existQuery.documents[0].documentID).updateData({
+						"thirdDay" : third.toString(),
+					});
+				}
+				date.add(first.toString());
+				date.add(second.toString());
+				date.add(third.toString());
+				sharedPreferences.setStringList("date", date);
+			}
+		}
+	}
+
 	print(checkLogin);
 	runApp(MaterialApp(home: checkLogin == null ? MyApp() : Home()));
 }
@@ -69,9 +106,14 @@ class _LoginState extends State<Login> with TickerProviderStateMixin {
 			if (existQuery.documents.isEmpty) {
 				DocumentReference documentReference = await Firestore.instance.collection("user").add({
 					'email': email,
+					'firstDay': DateTime.now().toString().substring(0,10),
 				});
+
+				List<String> date = List<String>();
+				date.add(DateTime.now().toString().substring(0,10));
+
+				prefs.setStringList("date", date);
 				prefs.setString('token', documentReference.documentID);
-				prefs.setStringList("date", [DateTime.now().toString().substring(0,10)]);
 				Fluttertoast.showToast(
 						msg: "Hi, welcome new user!",
 						toastLength: Toast.LENGTH_SHORT,
@@ -81,11 +123,40 @@ class _LoginState extends State<Login> with TickerProviderStateMixin {
 						textColor: Colors.white);
 			}
 			else{
-				List<String> date = prefs.getStringList("date") != null ? prefs.getStringList("date") :
-				List<String>() ;
-				date.add(DateTime.now().toString().substring(0,10));
+				List<String> date = List<String>();
+				var first = existQuery.documents[0]["firstDay"].toString();
+				if(existQuery.documents[0]["thirdDay"] != null){
+					first = DateTime.now().toString().substring(0, 10);
+					Firestore.instance.collection("user").document(existQuery.documents[0].documentID).updateData({
+						"firstDay" : first.toString(),
+					});
+				}
+				date.add(first.toString());
+
+				if(existQuery.documents[0]["secondDay"] == null || existQuery
+						.documents[0]["firstDay"].toString() != DateTime.now().toString().substring(0, 10)) {
+					var second = existQuery.documents[0]["secondDay"] == null ?
+					DateTime.now().toString().substring(0, 10) : existQuery.documents[0]["secondDay"].toString();
+					date.add(second.toString());
+					Firestore.instance.collection("user").document(existQuery.documents[0].documentID).updateData({
+						"secondDay" : second.toString(),
+					});
+				}
+
+				if(existQuery.documents[0]["secondDay"] != null || existQuery
+						.documents[0]["secondDay"].toString() != DateTime.now().toString().substring(0, 10)) {
+					var third = DateTime.now().toString().substring(0, 10);
+					date.add(third.toString());
+					Firestore.instance.collection("user").document(existQuery.documents[0].documentID).updateData({
+						"thirdDay" : third.toString(),
+					});
+					print(date);
+				}
+
+				print(date);
 				prefs.setStringList("date", date);
 				prefs.setString('token', existQuery.documents[0].documentID);
+
 				Fluttertoast.showToast(
 						msg: "Welcome back!",
 						toastLength: Toast.LENGTH_SHORT,
@@ -200,9 +271,14 @@ class _LoginState extends State<Login> with TickerProviderStateMixin {
 																pressLogin = true;
 															});
 
+															String pattern = "^[a-zA-Z0-9.!#\$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9]"
+																	"(?:[a-zA-Z0-9-]{0,253}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9]"
+																	"(?:[a-zA-Z0-9-]{0,253}[a-zA-Z0-9])?)*\$";
+
+															bool emailValid = RegExp(pattern).hasMatch(mailController.text);
 															if (mailController.text == "kosupure2019@gmail.com")
 																_continue(mailController.text);
-															else if (mailController.text.isNotEmpty)
+															else if (emailValid && mailController.text.contains(".com"))
 																_login(mailController.text);
 															else
 																Fluttertoast.showToast(

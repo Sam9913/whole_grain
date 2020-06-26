@@ -27,7 +27,7 @@ class Product_Details extends StatefulWidget {
     0.0
   ];
   final String product_name;
-  static List<String> productName = [];
+  static List<dynamic> productName = [];
   static List<double> productDetails = [
     0.0,
     0.0,
@@ -546,7 +546,6 @@ class _Product_DetailsState extends State<Product_Details> {
                                           onPressed: () async {
                                             SharedPreferences prefs =
                                                 await SharedPreferences.getInstance();
-
                                             List<String> date = prefs.getStringList("date");
 
                                                 QuerySnapshot existMeal = await Firestore.instance
@@ -556,23 +555,23 @@ class _Product_DetailsState extends State<Product_Details> {
                                                         DateTime.now().toString().substring(0, 10)).getDocuments();
 
                                                 if(existMeal.documents.isEmpty)
-                                            Product_Details.productName =  List<String>();
+                                            Product_Details.productName =  List<dynamic>();
                                                 else
-                                                  Product_Details.productName = existMeal.documents[0]["product"];
+                                                  Product_Details.productName = List.from(existMeal.documents[0]["product"]);
 
                                             Product_Details.productDetails[0] += serving_size;
                                             Product_Details.productDetails[1] +=
-                                                totalWG_content_per_serving;
+                                            totalWG_content_per_serving;
                                             Product_Details.productDetails[2] += totalWG_content;
                                             Product_Details.productDetails[3] += kcal_per_serving;
                                             Product_Details.productDetails[4] += total_fat;
                                             Product_Details.productDetails[5] += saturated_fat;
                                             Product_Details.productDetails[6] +=
-                                                monounsaturated_fat;
+                                            monounsaturated_fat;
                                             Product_Details.productDetails[7] +=
-                                                polyunsaturated_fat;
+                                            polyunsaturated_fat;
                                             Product_Details.productDetails[8] +=
-                                                carbohydrate_double;
+                                            carbohydrate_double;
                                             Product_Details.productDetails[9] += fibre_double;
                                             Product_Details.productDetails[10] += total_sugar;
                                             Product_Details.productDetails[11] += protein_double;
@@ -583,9 +582,6 @@ class _Product_DetailsState extends State<Product_Details> {
 
                                             if (!Product_Details.productName.contains(widget.product_name)) {
                                               Product_Details.productName.add(widget.product_name);
-                                              prefs.setStringList(onClickTitle + DateTime.now()
-                                                  .toString().substring(0, 10), Product_Details
-                                                  .productName);
 
                                               if (existMeal.documents.isEmpty) {
                                                 Firestore.instance.collection(onClickTitle).add({
@@ -610,33 +606,41 @@ class _Product_DetailsState extends State<Product_Details> {
                                               }
 
                                               for(int i=0; i < Product_Details.average.length; i++){
+                                                print(date);
                                                 Product_Details.average[i] += Product_Details
                                                     .productDetails[i] / date.length;
                                               }
 
                                               QuerySnapshot existAverage = await Firestore.instance
                                                   .collection("average")
-                                                  .where("token", isEqualTo: prefs.getString("token"))
-                                                  .where("date", isEqualTo:
-                                              DateTime.now().toString().substring(0, 10)).getDocuments();
+                                                  .where("token", isEqualTo: prefs.getString("token")).getDocuments();
+
+
 
                                               if(existAverage.documents.isEmpty){
                                                 Firestore.instance.collection("average").add({
                                                   "token": prefs.getString("token"),
-                                                  "date": DateTime.now().toString().substring(0, 10),
+                                                  "date": date.toList(),
                                                   "average": Product_Details.average.toList(),
                                                 });
-
-                                                Navigator.pop(context);
                                               }else{
                                                 Firestore.instance.collection("average")
                                                     .document(existAverage.documents[0].documentID)
                                                     .updateData({
                                                   "average": Product_Details.average.toList(),
                                                 });
-
-                                                Navigator.pop(context);
                                               }
+
+                                              Fluttertoast.showToast(
+                                                msg: "Added as " + onClickTitle,
+                                                toastLength: Toast.LENGTH_SHORT,
+                                                gravity: ToastGravity.BOTTOM,
+                                                timeInSecForIosWeb: 1,
+                                                backgroundColor: Colors.black,
+                                                textColor: Colors.white,
+                                              );
+
+                                              Navigator.pop(context);
 
                                             } else {
                                               Fluttertoast.showToast(
@@ -659,14 +663,6 @@ class _Product_DetailsState extends State<Product_Details> {
                         },
                       );
                     });
-
-                /*for (int index = 0; index < Product_Details.productName.length; index++) {
-                  if (Product_Details.productName[index] == widget.product_name) {
-
-                    Product_Details.productName.removeAt(index);
-                  }
-                }
-                Product_Details.productName.add(widget.product_name); */
               },
               label: 'Add',
               labelStyle:

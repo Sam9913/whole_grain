@@ -2,12 +2,14 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="365dfd34-00b9-4aab-a843-0633e4f8e20e" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/whole_grain/android/key.properties" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/whole_grain/lib/Diet.dart" beforeDir="false" afterPath="$PROJECT_DIR$/whole_grain/lib/Diet.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/whole_grain/android/app/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/whole_grain/android/app/build.gradle" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/whole_grain/lib/DietIntake.dart" beforeDir="false" afterPath="$PROJECT_DIR$/whole_grain/lib/DietIntake.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/whole_grain/lib/Home.dart" beforeDir="false" afterPath="$PROJECT_DIR$/whole_grain/lib/Home.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/whole_grain/lib/Meal.dart" beforeDir="false" afterPath="$PROJECT_DIR$/whole_grain/lib/Meal.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/whole_grain/lib/ProductDetails.dart" beforeDir="false" afterPath="$PROJECT_DIR$/whole_grain/lib/ProductDetails.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/whole_grain/lib/main.dart" beforeDir="false" afterPath="$PROJECT_DIR$/whole_grain/lib/main.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/whole_grain/pubspec.lock" beforeDir="false" afterPath="$PROJECT_DIR$/whole_grain/pubspec.lock" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -49,10 +51,11 @@
     <servers />
   </component>
   <component name="WindowStateProjectService">
-    <state x="463" y="119" key="FileChooserDialogImpl" timestamp="1591964185133">
+    <state x="463" y="119" key="FileChooserDialogImpl" timestamp="1593149764830">
       <screen x="0" y="0" width="1366" height="728" />
     </state>
-    <state x="463" y="119" key="FileChooserDialogImpl/0.0.1366.728@0.0.1366.728" timestamp="1591964185133" />
+    <state x="463" y="119" key="FileChooserDialogImpl/0.0.1366.728/1366.0.1920.1040@0.0.1366.728" timestamp="1592973528947" />
+    <state x="463" y="119" key="FileChooserDialogImpl/0.0.1366.728@0.0.1366.728" timestamp="1593149764830" />
     <state width="1323" height="178" key="GridCell.Tab.0.bottom" timestamp="1591071516194">
       <screen x="0" y="0" width="1366" height="728" />
     </state>

@@ -8,6 +8,7 @@ import 'package:tarc/DietIntake.dart';
 import 'Product.dart';
 import 'Search.dart';
 import 'VerticalList.dart';
+import 'main.dart';
 
 class Home extends StatefulWidget {
   @override
@@ -15,6 +16,24 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+
+  String email = "";
+
+  @override
+  void initState() {
+    super.initState();
+    getEmail();
+  }
+
+  getEmail() async{
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    DocumentSnapshot documentSnapshot = await Firestore.instance.collection("user").document(prefs
+        .getString("token")).get();
+
+    setState(() {
+      email = documentSnapshot["email"].toString();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -28,6 +47,40 @@ class _HomeState extends State<Home> {
         fontFamily: 'Arial',
       ),
       home: Scaffold(
+        drawer: Drawer(
+          child: ListView(
+            children: <Widget>[
+              DrawerHeader(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Text('Your current acccount email:'),
+                    Text(email,style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),),
+                  ],
+                ),
+                decoration: BoxDecoration(
+                  color: Colors.tealAccent,
+                ),
+              ),
+              ListTile(
+                title: Text('Reset'),
+                onTap: () {
+
+                },
+              ),
+              ListTile(
+                title: Text('Log Out'),
+                onTap: () async{
+                  SharedPreferences prefs = await SharedPreferences.getInstance();
+                  prefs.clear();
+                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) =>
+                  Login()));
+                },
+              ),
+            ],
+          ),
+        ),
         appBar: AppBar(
           title: Text("Home"),
           actions: <Widget>[
