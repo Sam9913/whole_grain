@@ -24,7 +24,7 @@ This project is aim to record the whole grain food have been taken in a day and 
 
 ## Credentials
 ### Admin
-Email : kosupure2019@gmail.com
+Email : kosupure2019@gmail.com<br/>
 PIN : 123456
 
 ### User
